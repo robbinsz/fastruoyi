@@ -107,6 +107,40 @@ python -m pytest -v
 
 使用 `docker-compose.test.my.yml`或`docker-compose.test.pg.yml`启动服务，默认前端端口为 `80`，后端端口为 `9099`。测试环境已禁用验证码功能。
 
+如需覆盖默认地址或账号，可设置环境变量：
+
+```bash
+export FRONTEND_URL=http://localhost:80
+export BACKEND_URL=http://localhost:9099
+export TEST_ADMIN_USERNAME=admin
+export TEST_ADMIN_PASSWORD=admin123
+```
+
+分销集成测试需要额外准备一个可创建投注链接的代理账号和一个归属该代理的客户账号：
+
+```bash
+export DIST_TEST_AGENT_USERNAME=agent_l1_demo_01
+export DIST_TEST_AGENT_PASSWORD=admin123
+export DIST_TEST_CUSTOMER_USERNAME=customer_l1_demo_01
+export DIST_TEST_CUSTOMER_PASSWORD=admin123
+```
+
+若未配置上述分销账号，`distribution/test_distribution_workflow.py` 会自动跳过。
+这组分销测试还会尝试使用脚本内置的批量账号，例如 `customer_l1_demo_02` 到 `customer_l1_demo_04`、`agent_l2_demo_01`、`agent_l2_demo_02`；若这些账号未导入，相关批量测试会自动跳过。
+
+仓库已经提供一份可直接导入的 20 账号测试脚本：
+
+```bash
+mysql -u root -p your_db < ../ruoyi-fastapi-backend/sql/agent-distribution-init.mysql.sql
+mysql -u root -p your_db < ../ruoyi-fastapi-backend/sql/agent-distribution-test-accounts.mysql.sql
+```
+
+其中包含：
+
+- 4 个代理账号：`agent_l1_demo_01`、`agent_l2_demo_01`、`agent_l2_demo_02`、`agent_l3_demo_01`
+- 16 个客户账号：`customer_l1_demo_01` 到 `customer_l1_demo_08`、`customer_l2a_demo_01` 到 `customer_l2a_demo_04`、`customer_l2b_demo_01` 到 `customer_l2b_demo_04`
+- 全部默认密码均为 `admin123`
+
 ## 注意事项
 
 1. 确保系统已安装 Docker 和 Docker Compose

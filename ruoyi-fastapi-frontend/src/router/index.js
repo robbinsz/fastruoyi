@@ -48,6 +48,12 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/bet/link/:token',
+    component: () => import('@/views/bet/link-entry.vue'),
+    hidden: true,
+    meta: { title: '投注确认' }
+  },
+  {
     path: "/:pathMatch(.*)*",
     component: () => import('@/views/error/404'),
     hidden: true

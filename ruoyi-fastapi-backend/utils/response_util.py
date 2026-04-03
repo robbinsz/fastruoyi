@@ -147,7 +147,7 @@ class ResponseUtil:
         result.update({'success': False, 'time': datetime.now()})
 
         return JSONResponse(
-            status_code=status.HTTP_200_OK,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             content=jsonable_encoder(result),
             headers=headers,
             media_type=media_type,
@@ -193,7 +193,7 @@ class ResponseUtil:
         result.update({'success': False, 'time': datetime.now()})
 
         return JSONResponse(
-            status_code=status.HTTP_200_OK,
+            status_code=status.HTTP_403_FORBIDDEN,
             content=jsonable_encoder(result),
             headers=headers,
             media_type=media_type,
@@ -204,6 +204,8 @@ class ResponseUtil:
     def error(
         cls,
         msg: str = '接口异常',
+        code: int = HttpStatusConstant.ERROR,
+        http_status_code: int = status.HTTP_200_OK,
         data: Any | None = None,
         rows: Any | None = None,
         dict_content: dict | None = None,
@@ -225,7 +227,7 @@ class ResponseUtil:
         :param background: 可选，响应返回后执行的后台任务
         :return: 错误响应结果
         """
-        result = {'code': HttpStatusConstant.ERROR, 'msg': msg}
+        result = {'code': code, 'msg': msg}
 
         if data is not None:
             result['data'] = data
@@ -239,7 +241,7 @@ class ResponseUtil:
         result.update({'success': False, 'time': datetime.now()})
 
         return JSONResponse(
-            status_code=status.HTTP_200_OK,
+            status_code=http_status_code,
             content=jsonable_encoder(result),
             headers=headers,
             media_type=media_type,

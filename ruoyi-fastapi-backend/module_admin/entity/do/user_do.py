@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import CHAR, BigInteger, Column, DateTime, String
+from sqlalchemy import CHAR, BigInteger, Column, DateTime, SmallInteger, String
 
 from config.database import Base
 from config.env import DataBaseConfig
@@ -44,6 +44,24 @@ class SysUser(Base):
         nullable=True,
         server_default=SqlalchemyUtil.get_server_default_null(DataBaseConfig.db_type),
         comment='备注',
+    )
+    agent_level = Column(
+        SmallInteger,
+        nullable=True,
+        server_default='0',
+        comment='代理层级：0=客户/普通用户 1=总代理 2=高级代理 3=中级代理 4=初级代理',
+    )
+    belong_agent_id = Column(
+        BigInteger,
+        nullable=True,
+        server_default=SqlalchemyUtil.get_server_default_null(DataBaseConfig.db_type, False),
+        comment='归属代理商agent_id，顶级代理和超管为空',
+    )
+    can_create_sub_agent = Column(
+        SmallInteger,
+        nullable=True,
+        server_default='0',
+        comment='是否可创建次级代理：0=否 1=是',
     )
 
 

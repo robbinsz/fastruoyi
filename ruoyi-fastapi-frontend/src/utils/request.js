@@ -110,7 +110,27 @@ service.interceptors.response.use(res => {
   },
   error => {
     console.log('err' + error)
-    let { message } = error;
+    const response = error.response || {}
+    const data = response.data || {}
+    let message = data.msg || error.message
+    if (response.status === 401 || data.code === 401) {
+      if (!isRelogin.show) {
+        isRelogin.show = true;
+        ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
+          isRelogin.show = false;
+          useUserStore().logOut().then(() => {
+            location.href = '/index';
+          })
+        }).catch(() => {
+          isRelogin.show = false;
+        });
+      }
+      return Promise.reject(new Error(data.msg || '无效的会话，或者会话已过期，请重新登录。'))
+    }
+    if (response.status === 403 || data.code === 403) {
+      ElNotification.error({ title: data.msg || '该用户无此接口权限' })
+      return Promise.reject(new Error(data.msg || '该用户无此接口权限'))
+    }
     if (message == "Network Error") {
       message = "后端接口连接异常";
     } else if (message.includes("timeout")) {

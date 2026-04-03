@@ -1,7 +1,9 @@
 import re
+from urllib.parse import urlparse
 
 from playwright.async_api._context_manager import PlaywrightContextManager
 
+from common.config import Config
 from common.login_helper import LoginHelper
 
 
@@ -11,23 +13,31 @@ class BasePageTest:
     page = None
     token = None
 
-    async def setup(self, playwright: PlaywrightContextManager) -> None:
+    async def setup(
+        self,
+        playwright: PlaywrightContextManager,
+        username: str = Config.admin_username,
+        password: str = Config.admin_password,
+    ) -> None:
         """初始化浏览器和登录"""
         # 首先登录获取token
         helper = LoginHelper()
-        self.token = helper.login(username='admin', password='admin123')
+        resolved_username = username or Config.admin_username
+        resolved_password = password or Config.admin_password
+        self.token = helper.login(username=resolved_username, password=resolved_password)
         assert self.token is not None, '登录应该成功'
 
         # 启动浏览器
         self.browser = await playwright.chromium.launch(headless=True)
         self.context = await self.browser.new_context()
+        frontend_host = urlparse(Config.frontend_url).hostname or 'localhost'
         # 设置认证token
         await self.context.add_cookies(
             [
                 {
                     'name': 'Admin-Token',
                     'value': self.token,
-                    'domain': 'localhost',
+                    'domain': frontend_host,
                     'path': '/',
                     'httpOnly': False,
                     'secure': False,

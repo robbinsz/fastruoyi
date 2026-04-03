@@ -14,6 +14,7 @@ from starlette.status import HTTP_200_OK
 from typing_extensions import ParamSpec
 from user_agents import parse
 
+from common.constant import HttpStatusConstant
 from common.context import RequestContext
 from common.enums import BusinessType
 from config.env import AppConfig
@@ -90,7 +91,12 @@ class Log:
                 result = ResponseUtil.failure(data=e.data, msg=e.message)
             except ServiceException as e:
                 logger.error(e.message)
-                result = ResponseUtil.error(data=e.data, msg=e.message)
+                result = ResponseUtil.error(
+                    data=e.data,
+                    msg=e.message,
+                    code=e.status_code or HttpStatusConstant.ERROR,
+                    http_status_code=e.status_code or HTTP_200_OK,
+                )
             except Exception as e:
                 logger.exception(e)
                 result = ResponseUtil.error(msg=str(e))

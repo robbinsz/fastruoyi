@@ -47,6 +47,11 @@ class UserModel(BaseModel):
     update_by: str | None = Field(default=None, description='更新者')
     update_time: datetime | None = Field(default=None, description='更新时间')
     remark: str | None = Field(default=None, description='备注')
+    agent_level: int | None = Field(
+        default=0, description='代理层级：0=客户/普通用户 1=总代理 2=高级代理 3=中级代理 4=初级代理'
+    )
+    belong_agent_id: int | None = Field(default=None, description='归属代理商agent_id，顶级代理为空')
+    can_create_sub_agent: int | None = Field(default=0, description='是否可创建次级代理：0=否 1=是')
     admin: bool | None = Field(default=False, description='是否为admin')
 
     @model_validator(mode='after')

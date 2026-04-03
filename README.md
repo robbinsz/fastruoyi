@@ -299,6 +299,11 @@ python3 app.py --env=prod
 docker compose -f docker-compose.my.yml up -d --build
 ```
 
+说明：
+- 当前 `docker-compose.my.yml` 已额外挂载代理分销初始化 SQL 和测试账号 SQL。
+- 首次启动会自动导入基础库、代理分销表结构、菜单权限以及约 20 个测试账号。
+- 如需重新初始化，请先删除已有 MySQL 容器和数据卷后再重建。
+
 #### PostgreSQL版本
 
 ```bash

@@ -1,6 +1,7 @@
 # 构建阶段
 FROM node:18-slim AS builder
 WORKDIR /app
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 # 复制源代码
 COPY . .
